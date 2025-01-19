@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  app:
+    image: mirlee/discordchatbot:latest # GitHub Actions에서 푸시된 Docker 이미지
+    container_name: discordchatbot-app
+    ports:
+      - "8080:8080" # 로컬 포트 8080 -> 컨테이너 포트 8080
+    environment:
+      - DB_USER=${DB_USER}       # .env 파일에서 데이터베이스 사용자 읽기
+      - DB_PASSWORD=${DB_PASSWORD} # .env 파일에서 데이터베이스 비밀번호 읽기
+      - DB_HOST=db              # MySQL 컨테이너 이름
+      - DB_PORT=3306            # MySQL 기본 포트
+    depends_on:
+      - db                      # db 서비스가 시작된 후 실행
+
+  db:
+    image: mysql:8
+    container_name: discordchatbot-db
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD} # 루트 비밀번호
+      MYSQL_USER: ${DB_USER}              # 데이터베이스 사용자
+      MYSQL_PASSWORD: ${DB_PASSWORD}      # 데이터베이스 비밀번호
+      MYSQL_DATABASE: quotes              # 초기 생성 데이터베이스 이름
+    ports:
+      - "3306:3306"                       # 로컬 포트 3306 -> 컨테이너 포트 3306
+    volumes:
+      - mysql_data:/var/lib/mysql         # MySQL 데이터 영구 저장소
+
+volumes:
+  mysql_data:
