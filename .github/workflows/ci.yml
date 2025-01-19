@@ -25,11 +25,9 @@ jobs:
           java-version: '21'
 
       # 3. Gradle 빌드
-      - name: Grant execute permission to Gradlew
-        run: chmod +x ./discordchatbot/gradlew
-
       - name: Build with Gradle
-        run: ./discordchatbot/gradlew clean build -x test
+        working-directory: discordchatbot # 작업 디렉토리 설정
+        run: ./gradlew clean build -x test
 
       # 4. Docker 이미지 빌드
       - name: Build and push Docker image
@@ -38,6 +36,7 @@ jobs:
           docker build \
             --build-arg DB_USER=${{ secrets.DB_USER }} \
             --build-arg DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
+            -f Dockerfile \
             -t mirlee/discordchatbot:latest .
           
       # 5. Docker Hub 로그인
