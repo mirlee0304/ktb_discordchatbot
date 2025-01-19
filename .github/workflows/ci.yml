@@ -25,8 +25,11 @@ jobs:
           java-version: '21'
 
       # 3. Gradle 빌드
-      - name: Build JAR with Gradle
-        run: ./gradlew clean build -x test
+      - name: Grant execute permission to Gradlew
+        run: chmod +x ./discordchatbot/gradlew
+
+      - name: Build with Gradle
+        run: ./discordchatbot/gradlew clean build -x test
 
       # 4. Docker 이미지 빌드
       - name: Build and push Docker image
